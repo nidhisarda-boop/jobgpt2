@@ -109,7 +109,9 @@ function JobCard({ job, onHighlight, highlighted, matchScore }) {
         )}
       </div>
       {job.description && (
-        <p className="text-xs text-gray-400 mt-2 line-clamp-2">{job.description}</p>
+        <p className="text-xs text-gray-400 mt-2 line-clamp-2"
+          dangerouslySetInnerHTML={{ __html: job.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() }}
+        />
       )}
     </div>
   );
@@ -170,16 +172,38 @@ function TypingIndicator({ hint }) {
 
 // ── Category normalisation map (API → standard names) ──────
 const CAT_NORM = {
-  "Sales & Marketing":    "Marketing & Advertising",
-  "IT services":          "Technology",
-  "Finance & accounting": "Financial Services",
-  "Manufacturing & prod": "Manufacturing",
-  "Transport & Logistics":"Transportation & Logistics",
-  "Infrastructure":       "Construction & Infrastructure",
-  // pass-through for already-correct names
+  // old names → new standard names
+  "Sales & Marketing":       "Marketing & Advertising",
+  "IT services":             "Technology",
+  "Finance & accounting":    "Financial Services",
+  "Manufacturing & prod":    "Manufacturing",
+  "Transport & Logistics":   "Transportation & Logistics",
+  "Infrastructure":          "Construction & Infrastructure",
+  // extra API names observed in the wild
+  "Supply chain":            "Transportation & Logistics",
+  "Supply Chain":            "Transportation & Logistics",
+  "Real Estate":             "Financial Services",
+  "Legal":                   "Financial Services",
+  "Non-profit":              "Government & Public Sector",
+  "Nonprofit":               "Government & Public Sector",
+  "Government":              "Government & Public Sector",
+  "Public Sector":           "Government & Public Sector",
+  "Energy":                  "Energy & Utilities",
+  "Utilities":               "Energy & Utilities",
+  "Media":                   "Media & Entertainment",
+  "Entertainment":           "Media & Entertainment",
+  "Insurance":               "Financial Services",
+  "Telecom":                 "Technology",
+  "Telecommunications":      "Technology",
+  "Retail":                  "Marketing & Advertising",
+  "E-commerce":              "Marketing & Advertising",
+  "Others":                  null,   // drop "Others" — don't show in filter
 };
 function normaliseJobs(jobs) {
-  return jobs.map(j => ({ ...j, category: CAT_NORM[j.category] ?? j.category }));
+  return jobs.map(j => {
+    const norm = j.category in CAT_NORM ? CAT_NORM[j.category] : j.category;
+    return { ...j, category: norm || null };  // null drops it from filter list
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
