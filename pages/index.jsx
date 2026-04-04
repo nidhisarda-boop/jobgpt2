@@ -648,8 +648,38 @@ export default function Home() {
       applyFiltersFromProfile({ ...parsed, keyword: parsed.keyword || text });
     }
 
-    // ── NLP + complexity routing ───────────────────────────
-    const parsed = parseJobQuery(text);
+    // ── NLP: LLM first (Nova routing pattern), parseJobQuery as fallback ──
+    let parsed;
+    try {
+      const llmRes = await fetch("/api/nlp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: text }),
+      });
+      if (llmRes.ok) {
+        const llmData = await llmRes.json();
+        // Merge LLM result with parseJobQuery for any fields LLM missed
+        const local = parseJobQuery(text);
+        parsed = {
+          keyword:        llmData.keyword        ?? local.keyword,
+          location:       llmData.location       ?? local.location,
+          category:       llmData.category       ?? local.category,
+          employmentType: llmData.employmentType ?? local.employmentType,
+          experience:     llmData.experience     ?? local.experience,
+          salaryMin:      llmData.salaryMin      ?? local.salaryMin,
+          salaryMax:      llmData.salaryMax      ?? local.salaryMax,
+          categoryExplicit: llmData.categoryExplicit ?? local.categoryExplicit ?? false,
+          _source: "llm:" + (llmData._provider || "unknown"),
+        };
+      } else {
+        parsed = parseJobQuery(text);
+        parsed._source = "local";
+      }
+    } catch {
+      parsed = parseJobQuery(text);
+      parsed._source = "local:fallback";
+    }
+
     const complexity = getQueryComplexity(text, parsed);
     const thinkMs = complexity === "complex"  ? 900 + Math.random()*500
                   : complexity === "standard" ? 650 + Math.random()*350
