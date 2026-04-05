@@ -71,7 +71,7 @@ function JobCard({ job, onHighlight, highlighted, matchScore }) {
   const companyName = typeof job.company === "object" ? (job.company?.name || "Company") : (job.company || "Company");
   return (
     <div
-      className={`job-card bg-white rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md ${highlighted ? "border-blue-400 ring-2 ring-blue-200" : "border-gray-200 hover:border-gray-300"}`}
+      className={`job-card bg-white rounded-xl border p-4 cursor-pointer transition-all hover:shadow-md ${highlighted ? "border-[#D42B2B] ring-1 ring-[#D42B2B]/20" : "border-gray-200 hover:border-gray-300"}`}
       onClick={() => job.applyUrl && job.applyUrl !== "#" && window.open(job.applyUrl, "_blank")}
     >
       <div className="flex items-start gap-3">
@@ -85,7 +85,7 @@ function JobCard({ job, onHighlight, highlighted, matchScore }) {
               </span>
             )}
           </div>
-          <p className="text-blue-600 font-medium text-sm mt-0.5">{companyName}</p>
+          <p className="text-[#D42B2B] font-medium text-sm mt-0.5">{companyName}</p>
         </div>
       </div>
       <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
@@ -100,7 +100,7 @@ function JobCard({ job, onHighlight, highlighted, matchScore }) {
           </span>
         )}
         {matchScore >= 8 && (
-          <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg">
+          <span className="text-xs font-semibold text-[#D42B2B] bg-[#F0EBEB] px-2 py-0.5 rounded-lg">
             🎯 {matchScore >= 12 ? "Exact match" : matchScore >= 10 ? "Strong match" : "Good match"}
           </span>
         )}
@@ -126,13 +126,13 @@ function MsgBubble({ msg }) {
   return (
     <div className={`flex ${isBot ? "justify-start" : "justify-end"} mb-2`}>
       {isBot && (
-        <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs mr-2 flex-shrink-0 mt-0.5 select-none">
-          🤖
+        <div className="w-7 h-7 rounded-full bg-[#F0EBEB] border border-[#D42B2B]/20 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5 select-none overflow-hidden">
+          <img src="/logos/joblet-mark-icon.png" alt="J" className="w-5 h-5 object-contain" />
         </div>
       )}
       <div
         className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-          isBot ? "bg-gray-100 text-gray-800 rounded-tl-sm" : "bg-blue-600 text-white rounded-tr-sm"
+          isBot ? "bg-white text-[#1A1A1A] rounded-tl-sm shadow-sm" : "bg-[#D42B2B] text-white rounded-tr-sm"
         }`}
         dangerouslySetInnerHTML={{ __html: html }}
       />
@@ -161,8 +161,10 @@ function TypingIndicator({ hint }) {
   }, []);
   return (
     <div className="flex justify-start mb-2">
-      <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs mr-2 flex-shrink-0 mt-0.5">🤖</div>
-      <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2 min-w-[180px]">
+      <div className="w-7 h-7 rounded-full bg-[#F0EBEB] border border-[#D42B2B]/20 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5 overflow-hidden">
+        <img src="/logos/joblet-mark-icon.png" alt="J" className="w-5 h-5 object-contain" />
+      </div>
+      <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2 min-w-[180px] shadow-sm">
         <span className="typing-dot" /><span className="typing-dot" /><span className="typing-dot" />
         <span className="text-xs text-gray-500 ml-1 italic">{hint || THINKING_MSGS[msgIdx]}</span>
       </div>
@@ -218,7 +220,7 @@ export default function Home() {
 
   const [messages,     setMessages]     = useState([{
     role: "bot",
-    text: "👋 Hi! I'm **JobGPT 2.0** — I remember your preferences as we chat, so you can refine naturally.\n\nTry: *\"Remote senior product manager in NYC\"* or just *\"software engineer\"* and I'll ask follow-ups!",
+    text: "👋 Hi! I'm **Joblet AI** — I remember your preferences as we chat, so you can refine naturally.\n\nTry: *\"Remote senior product manager in NYC\"* or just *\"software engineer\"* and I'll ask follow-ups!",
   }]);
   const [quickReplies, setQuickReplies] = useState([
     "Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech",
@@ -357,13 +359,13 @@ export default function Home() {
     if (/^(hi|hello|hey|howdy|yo|sup|greetings|good\s*(morning|evening|afternoon|night))[\s!?.,]*$/i.test(text)) {
       const hour = new Date().getHours();
       const timeGreet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-      addBotMsg(`${timeGreet}! 👋 I'm **JobGPT 2.0** — your AI headhunter. Tell me what kind of role you're looking for and I'll get searching!\n\nExamples: *"Remote senior data scientist"*, *"Entry level nurse Chicago"*, or *"Healthcare jobs"*`);
+      addBotMsg(`${timeGreet}! 👋 I'm **Joblet AI** — your AI headhunter. Tell me what kind of role you're looking for and I'll get searching!\n\nExamples: *"Remote senior data scientist"*, *"Entry level nurse Chicago"*, or *"Healthcare jobs"*`);
       setQuickReplies(["Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech"]);
       return;
     }
     // ── "How does this work / help" ───────────────────────
     if (/\b(how\s+does\s+this\s+work|what\s+can\s+you\s+do|what\s+do\s+you\s+do|how\s+do\s+i\s+use\s+(this|you)|help\s+me\s+find|can\s+you\s+help)\b/i.test(tl)) {
-      addBotMsg(`🤖 **How I work:**\n\nJust describe your ideal job in plain English — I'll parse it and filter from thousands of live listings.\n\n**Examples:**\n• *"Senior software engineer, remote, 100k+"*\n• *"ICU nurse jobs Chicago"*\n• *"Tech industry jobs"* — browse a whole sector\n• *"What does a PM earn?"* — get salary insights\n\nI also remember your preferences as we chat, so you can refine naturally. Ask me anything!`);
+      addBotMsg(`✨ **How Joblet works:**\n\nJust describe your ideal job in plain English — I'll parse it and filter from thousands of live listings.\n\n**Examples:**\n• *"Senior software engineer, remote, 100k+"*\n• *"ICU nurse jobs Chicago"*\n• *"Tech industry jobs"* — browse a whole sector\n• *"What does a PM earn?"* — get salary insights\n\nI also remember your preferences as we chat, so you can refine naturally. Ask me anything!`);
       setQuickReplies(["Remote software engineer", "Healthcare jobs", "Entry level marketing", "Senior product manager"]);
       return;
     }
@@ -854,27 +856,31 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>JobGPT 2.0 — AI Job Search</title>
+        <title>Joblet.ai — AI Job Search</title>
         <meta name="description" content="AI-powered job search with multi-turn memory and Nova intelligence" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+      <div className="flex h-screen bg-[#F5F0EC] font-sans overflow-hidden">
 
         {/* ── SIDEBAR ────────────────────────────────────── */}
-        <aside className="w-56 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-y-auto">
+        <aside className="w-56 bg-white border-r border-gray-100 flex flex-col flex-shrink-0 overflow-y-auto">
           <div className="p-3 border-b border-gray-100">
-            <div className="text-blue-600 font-bold text-base">JobGPT 2.0</div>
-            <div className="text-[11px] text-gray-400 mt-0.5">
+            <img
+              src="/logos/joblet-wordmark-primary.png"
+              alt="Joblet"
+              className="h-6 w-auto object-contain"
+            />
+            <div className="text-[11px] text-gray-400 mt-1.5">
               {apiStatus === "live" ? "🟢 Live jobs" : apiStatus === "demo" ? "🟡 Demo mode" : "⏳ Loading..."}
             </div>
           </div>
 
           {/* ── Profile Memory Widget ───────────────── */}
           {profileSnap && (profileSnap.role || profileSnap.location || profileSnap.type || profileSnap.experience) && (
-            <div className="mx-3 mt-2 mb-1 bg-blue-50 border border-blue-100 rounded-xl p-2.5 text-xs">
+            <div className="mx-3 mt-2 mb-1 bg-[#F0EBEB] border border-[#D42B2B]/20 rounded-xl p-2.5 text-xs">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-semibold text-blue-700 text-[11px]">🧠 What I know</span>
+                <span className="font-semibold text-[#D42B2B] text-[11px]">🧠 What I know</span>
                 <button
                   onClick={() => {
                     setFilters({ keyword:"", location:"", category:"", employmentType:"", experience:"", salaryMin:"", salaryMax:"" });
@@ -882,15 +888,15 @@ export default function Home() {
                     profileRef.current = { role:null, location:null, type:null, schedule:null, experience:null, category:null, roleType:null, searchCount:0, pendingQuestion:null, salaryAsked:false, previousRole:null };
                     setProfileSnap(null);
                   }}
-                  className="text-[10px] text-blue-400 hover:text-blue-600 transition"
+                  className="text-[10px] text-[#D42B2B]/50 hover:text-[#D42B2B] transition"
                   title="Clear memory"
                 >✕ Clear</button>
               </div>
               <div className="space-y-0.5 text-gray-600">
-                {profileSnap.role     && <div><span className="text-blue-500">Role:</span> {profileSnap.role}</div>}
-                {profileSnap.location && <div><span className="text-blue-500">Location:</span> {profileSnap.location}</div>}
-                {profileSnap.type     && <div><span className="text-blue-500">Type:</span> {profileSnap.type}</div>}
-                {profileSnap.experience && <div><span className="text-blue-500">Level:</span> {profileSnap.experience}</div>}
+                {profileSnap.role     && <div><span className="text-[#D42B2B]/70">Role:</span> {profileSnap.role}</div>}
+                {profileSnap.location && <div><span className="text-[#D42B2B]/70">Location:</span> {profileSnap.location}</div>}
+                {profileSnap.type     && <div><span className="text-[#D42B2B]/70">Type:</span> {profileSnap.type}</div>}
+                {profileSnap.experience && <div><span className="text-[#D42B2B]/70">Level:</span> {profileSnap.experience}</div>}
               </div>
             </div>
           )}
@@ -904,7 +910,7 @@ export default function Home() {
                 value={filters.keyword}
                 onChange={e => setFilters(p => ({ ...p, keyword: e.target.value }))}
                 placeholder="Job title…"
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               />
             </div>
 
@@ -915,7 +921,7 @@ export default function Home() {
                 value={filters.location}
                 onChange={e => setFilters(p => ({ ...p, location: e.target.value }))}
                 placeholder="City or Remote…"
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               />
             </div>
 
@@ -928,7 +934,7 @@ export default function Home() {
                     type="checkbox"
                     checked={filters.employmentType === t}
                     onChange={() => setFilters(p => ({ ...p, employmentType: p.employmentType === t ? "" : t }))}
-                    className="accent-blue-600"
+                    className="accent-[#D42B2B]"
                   />
                   {t}
                 </label>
@@ -941,7 +947,7 @@ export default function Home() {
               <select
                 value={filters.experience}
                 onChange={e => setFilters(p => ({ ...p, experience: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               >
                 <option value="">All levels</option>
                 {["0-1 Years","1-2 Years","2-5 Years","5-7 Years","7-10 Years","10+ Years"].map(e => (
@@ -979,7 +985,7 @@ export default function Home() {
                       type="checkbox"
                       checked={filters.category === cat}
                       onChange={() => setFilters(p => ({ ...p, category: p.category === cat ? "" : cat }))}
-                      className="accent-blue-600 flex-shrink-0"
+                      className="accent-[#D42B2B] flex-shrink-0"
                     />
                     <span className="truncate">{cat}</span>
                   </label>
@@ -996,7 +1002,7 @@ export default function Home() {
                     type="checkbox"
                     checked={activeRoleType === rt.id}
                     onChange={() => setActiveRoleType(prev => prev === rt.id ? null : rt.id)}
-                    className="accent-blue-600"
+                    className="accent-[#D42B2B]"
                   />
                   <span className="truncate">{rt.label}</span>
                 </label>
@@ -1017,13 +1023,13 @@ export default function Home() {
         </aside>
 
         {/* ── MAIN CONTENT ────────────────────────────────── */}
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden bg-[#F5F0EC]">
 
           {/* Top bar */}
-          <div className="bg-white border-b border-gray-200 px-5 py-3 flex items-center justify-between flex-shrink-0">
+          <div className="bg-white border-b border-gray-100 px-5 py-3 flex items-center justify-between flex-shrink-0">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-base font-bold text-gray-900">Job Results</h1>
+                <h1 className="text-base font-bold text-[#1A1A1A]">Job Results</h1>
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                   {isLoading ? "Loading…" : `${filteredJobs.length} jobs`}
                 </span>
@@ -1038,14 +1044,14 @@ export default function Home() {
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               >
                 <option value="newest">Newest first</option>
                 <option value="salary_desc">Highest salary</option>
               </select>
               <button
                 onClick={() => setChatOpen(o => !o)}
-                className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-1.5"
+                className="bg-[#D42B2B] text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-[#B82424] transition flex items-center gap-1.5"
               >
                 💬 {chatOpen ? "Hide chat" : "Open chat"}
               </button>
@@ -1114,19 +1120,21 @@ export default function Home() {
 
             {/* ── CHAT PANEL ──────────────────────────────── */}
             {chatOpen && (
-              <div className="w-80 flex-shrink-0 bg-white border-l border-gray-200 flex flex-col">
+              <div className="w-80 flex-shrink-0 bg-[#FDFBF9] border-l border-gray-100 flex flex-col">
 
                 {/* Chat header */}
                 <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-sm text-gray-900">JobGPT Chat</div>
+                    <div className="font-semibold text-sm text-[#1A1A1A]">
+                      <span>job</span><span className="text-[#D42B2B]">let</span><span>.ai</span>
+                    </div>
                     <div className="text-[11px] text-green-600">● Online</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       title="Restart chat"
                       onClick={() => {
-                        setMessages([{ role: "bot", text: "👋 Hi! I'm **JobGPT 2.0** — I remember your preferences as we chat, so you can refine naturally.\n\nTry: *\"Remote senior product manager in NYC\"* or just *\"software engineer\"* and I'll ask follow-ups!" }]);
+                        setMessages([{ role: "bot", text: "👋 Hi! I'm **Joblet AI** — I remember your preferences as we chat, so you can refine naturally.\n\nTry: *\"Remote senior product manager in NYC\"* or just *\"software engineer\"* and I'll ask follow-ups!" }]);
                         setQuickReplies(["Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech"]);
                         setFilters({ keyword:"", location:"", category:"", employmentType:"", experience:"", salaryMin:"", salaryMax:"" });
                         setActiveRoleType(null);
@@ -1156,7 +1164,7 @@ export default function Home() {
                       <button
                         key={i}
                         onClick={() => sendChat(qr)}
-                        className="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1 hover:bg-blue-100 transition"
+                        className="text-xs bg-[#F0EBEB] text-[#D42B2B] border border-[#D42B2B]/25 rounded-full px-2.5 py-1 hover:bg-[#F5F0EC] transition"
                       >
                         {qr}
                       </button>
@@ -1171,12 +1179,12 @@ export default function Home() {
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendChat()}
                     placeholder="Describe the job you want…"
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D42B2B] bg-white"
                   />
                   <button
                     onClick={() => sendChat()}
                     disabled={isTyping}
-                    className="bg-blue-600 text-white rounded-xl px-3 py-2 text-sm font-bold hover:bg-blue-700 disabled:opacity-50 transition"
+                    className="bg-[#D42B2B] text-white rounded-xl px-3 py-2 text-sm font-bold hover:bg-[#B82424] disabled:opacity-50 transition"
                   >
                     ➤
                   </button>
