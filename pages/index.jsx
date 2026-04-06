@@ -229,6 +229,7 @@ export default function Home() {
   const [typingHint,   setTypingHint]   = useState(null);
   const [profileSnap,  setProfileSnap]  = useState(null); // triggers re-render of profile widget
   const [chatOpen,     setChatOpen]     = useState(true);
+  const [sidebarOpen,  setSidebarOpen]  = useState(false); // mobile sidebar drawer
   const [input,        setInput]        = useState("");
   const [highlightId,  setHighlightId]  = useState(null);
 
@@ -863,17 +864,37 @@ export default function Home() {
 
       <div className="flex h-screen bg-[#F5F0EC] font-sans overflow-hidden">
 
+        {/* ── MOBILE SIDEBAR OVERLAY ─────────────────────── */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* ── SIDEBAR ────────────────────────────────────── */}
-        <aside className="w-56 bg-white border-r border-gray-100 flex flex-col flex-shrink-0 overflow-y-auto">
-          <div className="p-3 border-b border-gray-100">
-            <img
-              src="/logos/joblet-wordmark-primary.png"
-              alt="Joblet"
-              className="h-6 w-auto object-contain"
-            />
-            <div className="text-[11px] text-gray-400 mt-1.5">
-              {apiStatus === "live" ? "🟢 Live jobs" : apiStatus === "demo" ? "🟡 Demo mode" : "⏳ Loading..."}
+        <aside className={`
+          fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 flex flex-col overflow-y-auto
+          transform transition-transform duration-200
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:relative md:translate-x-0 md:w-56 md:flex-shrink-0 md:z-auto
+        `}>
+          <div className="p-3 border-b border-gray-100 flex items-center justify-between">
+            <div>
+              <img
+                src="/logos/joblet-wordmark-primary.png"
+                alt="Joblet"
+                className="h-6 w-auto object-contain"
+              />
+              <div className="text-[11px] text-gray-400 mt-1.5">
+                {apiStatus === "live" ? "🟢 Live jobs" : apiStatus === "demo" ? "🟡 Demo mode" : "⏳ Loading..."}
+              </div>
             </div>
+            {/* Close button — mobile only */}
+            <button
+              className="md:hidden text-gray-400 hover:text-gray-600 text-xl leading-none p-1"
+              onClick={() => setSidebarOpen(false)}
+            >×</button>
           </div>
 
           {/* ── Profile Memory Widget ───────────────── */}
@@ -1026,10 +1047,21 @@ export default function Home() {
         <main className="flex-1 flex flex-col overflow-hidden bg-[#F5F0EC]">
 
           {/* Top bar */}
-          <div className="bg-white border-b border-gray-100 px-5 py-3 flex items-center justify-between flex-shrink-0">
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-base font-bold text-[#1A1A1A]">Job Results</h1>
+          <div className="bg-white border-b border-gray-100 px-3 md:px-5 py-3 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-2">
+              {/* Hamburger — mobile only */}
+              <button
+                className="md:hidden flex flex-col gap-1 p-1.5 rounded-lg hover:bg-gray-100 transition flex-shrink-0"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open filters"
+              >
+                <span className="block w-5 h-0.5 bg-[#1A1A1A] rounded" />
+                <span className="block w-5 h-0.5 bg-[#1A1A1A] rounded" />
+                <span className="block w-5 h-0.5 bg-[#1A1A1A] rounded" />
+              </button>
+              <div>
+              <div className="flex items-center gap-2 md:gap-3">
+                <h1 className="text-sm md:text-base font-bold text-[#1A1A1A]">Job Results</h1>
                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                   {isLoading ? "Loading…" : `${filteredJobs.length} jobs`}
                 </span>
@@ -1040,11 +1072,12 @@ export default function Home() {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            </div>
+            <div className="flex items-center gap-2">
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
+                className="hidden sm:block border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               >
                 <option value="newest">Newest first</option>
                 <option value="salary_desc">Highest salary</option>
@@ -1053,7 +1086,8 @@ export default function Home() {
                 onClick={() => setChatOpen(o => !o)}
                 className="bg-[#D42B2B] text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-[#B82424] transition flex items-center gap-1.5"
               >
-                💬 {chatOpen ? "Hide chat" : "Open chat"}
+                💬 <span className="hidden sm:inline">{chatOpen ? "Hide chat" : "Open chat"}</span>
+                <span className="sm:hidden">{chatOpen ? "✕" : "Chat"}</span>
               </button>
             </div>
           </div>
@@ -1120,15 +1154,23 @@ export default function Home() {
 
             {/* ── CHAT PANEL ──────────────────────────────── */}
             {chatOpen && (
-              <div className="w-80 flex-shrink-0 bg-[#FDFBF9] border-l border-gray-100 flex flex-col">
+              <div className="fixed inset-0 z-30 bg-[#FDFBF9] flex flex-col md:relative md:inset-auto md:z-auto md:w-80 md:flex-shrink-0 md:border-l md:border-gray-100">
 
                 {/* Chat header */}
-                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                  <div>
+                <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    {/* Back arrow — mobile only */}
+                    <button
+                      className="md:hidden text-gray-400 hover:text-gray-700 text-lg leading-none mr-1"
+                      onClick={() => setChatOpen(false)}
+                      aria-label="Close chat"
+                    >←</button>
+                    <div>
                     <div className="font-semibold text-sm text-[#1A1A1A]">
                       <span>job</span><span className="text-[#D42B2B]">let</span><span>.ai</span>
                     </div>
                     <div className="text-[11px] text-green-600">● Online</div>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
