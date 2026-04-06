@@ -92,7 +92,16 @@ const PROVIDERS = [
     url: "https://openrouter.ai/api/v1/chat/completions",
     model: "meta-llama/llama-3.3-70b-instruct:free",
     tier: "free",
-    headers: { "HTTP-Referer": "https://jobgpt2-nextjs.vercel.app", "X-Title": "JobGPT 2.0" },
+    headers: { "HTTP-Referer": "https://jobgpt2-nextjs.vercel.app", "X-Title": "Joblet AI" },
+  },
+  {
+    name: "gemini",
+    envKey: "GEMINI_API_KEY",
+    // key goes in URL as query param — Gemini doesn't use Authorization header
+    url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent",
+    model: "gemini-2.0-flash-lite",
+    tier: "free",
+    isGemini: true,
   },
   // ── Paid tier (quality fallback, only if key present) ──
   {
@@ -128,7 +137,19 @@ async function callProvider(provider, query, timeoutMs = 8000) {
 
   try {
     let res;
-    if (provider.isAnthropic) {
+    if (provider.isGemini) {
+      // Google Gemini API — key in URL, different request/response schema
+      res = await fetch(`${provider.url}?key=${key}`, {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: "user", parts: [{ text: query }] }],
+          generationConfig: { maxOutputTokens: 300, temperature: 0 },
+        }),
+      });
+    } else if (provider.isAnthropic) {
       // Anthropic Messages API format
       res = await fetch(provider.url, {
         method: "POST",
@@ -171,9 +192,11 @@ async function callProvider(provider, query, timeoutMs = 8000) {
     if (!res.ok) return null;
 
     const data = await res.json();
-    const text = provider.isAnthropic
-      ? data?.content?.[0]?.text
-      : data?.choices?.[0]?.message?.content;
+    const text = provider.isGemini
+      ? data?.candidates?.[0]?.content?.parts?.[0]?.text
+      : provider.isAnthropic
+        ? data?.content?.[0]?.text
+        : data?.choices?.[0]?.message?.content;
 
     if (!text) return null;
 
