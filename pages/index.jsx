@@ -657,6 +657,7 @@ export default function Home() {
           keyword:        llmData.keyword        ?? local.keyword,
           category:       llmData.category       ?? local.category,
           employmentType: llmData.employmentType ?? local.employmentType,
+          workSchedule:   llmData.workSchedule   ?? local.workSchedule,
           experience:     llmData.experience     ?? local.experience,
           salaryMin:      llmData.salaryMin      ?? local.salaryMin,
           salaryMax:      llmData.salaryMax      ?? local.salaryMax,
@@ -871,7 +872,7 @@ export default function Home() {
                   }}
                   className="text-[10px] text-[#D42B2B]/50 hover:text-[#D42B2B] transition"
                   title="Clear memory"
-                > Clear</button>
+                >&#x2715; Clear</button>
               </div>
               <div className="space-y-0.5 text-gray-600">
                 {profileSnap.role     && <div><span className="text-[#D42B2B]/70">Role:</span> {profileSnap.role}</div>}
@@ -1000,7 +1001,7 @@ export default function Home() {
                 className="bg-[#D42B2B] text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-[#B82424] transition flex items-center gap-1.5"
               >
                 <span className="hidden sm:inline">{chatOpen ? "Hide chat" : "Chat"}</span>
-                <span className="sm:hidden">{chatOpen ? "" : "Chat"}</span>
+                <span className="sm:hidden">{chatOpen ? "&#x2715;" : "Chat"}</span>
               </button>
             </div>
           </div>
