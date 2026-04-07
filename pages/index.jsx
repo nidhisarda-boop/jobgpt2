@@ -17,22 +17,22 @@ const AB_VARIANT = typeof window !== "undefined" && Math.random() < 0.5 ? "A" : 
 
 //  Fallback demo jobs (used when API is unavailable) 
 const DEMO_JOBS = [
-  { id:"d1",  title:"Senior Software Engineer",   company:"TechCorp",        location:"San Francisco, CA",  category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior level",  description:"Full-stack React + Node.js",       applyUrl:"#" },
+  { id:"d1",  title:"Senior Software Engineer",   company:"TechCorp",        location:"San Francisco, CA",  category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior",  description:"Full-stack React + Node.js",       applyUrl:"#" },
   { id:"d2",  title:"Product Manager",            company:"StartupXYZ",      location:"New York, NY",       category:"Technology",         employmentType:"Hybrid",  experienceLevel:"Mid level",     description:"Lead product strategy for B2B SaaS", applyUrl:"#" },
-  { id:"d3",  title:"Data Scientist",             company:"DataCo",          location:"Remote",             category:"AI",                  employmentType:"Remote",  experienceLevel:"Senior level",  description:"ML models for predictive analytics", applyUrl:"#" },
+  { id:"d3",  title:"Data Scientist",             company:"DataCo",          location:"Remote",             category:"AI",                  employmentType:"Remote",  experienceLevel:"Senior",  description:"ML models for predictive analytics", applyUrl:"#" },
   { id:"d4",  title:"Registered Nurse – ICU",     company:"City Hospital",   location:"Chicago, IL",        category:"Healthcare",          employmentType:"On-site", experienceLevel:"Mid level",     description:"Critical care, rotating shifts",   applyUrl:"#" },
   { id:"d5",  title:"Financial Analyst",          company:"FinGroup",        location:"Boston, MA",         category:"Financial Services",employmentType:"Hybrid",  experienceLevel:"Entry level",   description:"Financial modelling and reporting", applyUrl:"#" },
   { id:"d6",  title:"UX Designer",               company:"DesignStudio",    location:"Austin, TX",         category:"Technology",         employmentType:"Hybrid",  experienceLevel:"Mid level",     description:"User research and interface design", applyUrl:"#" },
-  { id:"d7",  title:"Marketing Manager",          company:"BrandCo",         location:"Los Angeles, CA",    category:"Marketing & Advertising",   employmentType:"Hybrid",  experienceLevel:"Senior level",  description:"Digital campaigns and brand strategy", applyUrl:"#" },
-  { id:"d8",  title:"DevOps Engineer",            company:"CloudSys",        location:"Seattle, WA",        category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior level",  description:"AWS infra and CI/CD pipelines",    applyUrl:"#" },
+  { id:"d7",  title:"Marketing Manager",          company:"BrandCo",         location:"Los Angeles, CA",    category:"Marketing & Advertising",   employmentType:"Hybrid",  experienceLevel:"Senior",  description:"Digital campaigns and brand strategy", applyUrl:"#" },
+  { id:"d8",  title:"DevOps Engineer",            company:"CloudSys",        location:"Seattle, WA",        category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior",  description:"AWS infra and CI/CD pipelines",    applyUrl:"#" },
   { id:"d9",  title:"Sales Development Rep",      company:"Salesforce",      location:"Chicago, IL",        category:"Marketing & Advertising",   employmentType:"Hybrid",  experienceLevel:"Entry level",   description:"Generate pipeline for enterprise accounts", applyUrl:"#" },
-  { id:"d10", title:"Machine Learning Engineer",  company:"AI Labs",         location:"Remote",             category:"AI",                  employmentType:"Remote",  experienceLevel:"Senior level",  description:"LLM fine-tuning and deployment",   applyUrl:"#" },
+  { id:"d10", title:"Machine Learning Engineer",  company:"AI Labs",         location:"Remote",             category:"AI",                  employmentType:"Remote",  experienceLevel:"Senior",  description:"LLM fine-tuning and deployment",   applyUrl:"#" },
   { id:"d11", title:"HR Manager",                company:"PeopleFirst",     location:"Washington, DC",     category:"Consulting",          employmentType:"Hybrid",  experienceLevel:"Mid level",     description:"Full-cycle HR for 200-person company", applyUrl:"#" },
   { id:"d12", title:"Truck Driver CDL",           company:"FreightCo",       location:"Dallas, TX",         category:"Transportation & Logistics",employmentType:"On-site",experienceLevel:"Mid level",     description:"Long-haul freight, Class A CDL",   applyUrl:"#" },
   { id:"d13", title:"Electrician",               company:"PowerUp Services",location:"Houston, TX",        category:"Construction & Infrastructure",      employmentType:"On-site", experienceLevel:"Mid level",     description:"Commercial and residential work",  applyUrl:"#" },
   { id:"d14", title:"Customer Success Manager",   company:"SaaSCo",          location:"Remote",             category:"Marketing & Advertising",   employmentType:"Remote",  experienceLevel:"Mid level",     description:"Enterprise onboarding and retention", applyUrl:"#" },
   { id:"d15", title:"Data Analyst",              company:"InsightsCo",      location:"Atlanta, GA",        category:"AI",                  employmentType:"Hybrid",  experienceLevel:"Entry level",   description:"SQL, Tableau, BI reporting",       applyUrl:"#" },
-  { id:"d16", title:"Cloud Architect",            company:"AWS",             location:"Seattle, WA",        category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior level",  description:"Design cloud solutions for enterprise", applyUrl:"#" },
+  { id:"d16", title:"Cloud Architect",            company:"AWS",             location:"Seattle, WA",        category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior",  description:"Design cloud solutions for enterprise", applyUrl:"#" },
 ];
 
 //  Shared helpers 
@@ -431,7 +431,7 @@ export default function Home() {
       const range = getSalaryRange(role);
       const est = range
         ? (isSenior ? `$${Math.round(range.senior / 1000)}k` : `$${Math.round(range.base / 1000)}k`)
-        : estimateSalary(role, isSenior ? "Senior level" : "");
+        : estimateSalary(role, isSenior ? "Senior" : "");
       const rangeDisplay = range
         ? `\n\n**Full range:** Entry ${range.baseFmt} → Senior ${range.seniorFmt}`
         : "";
@@ -440,7 +440,7 @@ export default function Home() {
         : `I don't have salary data for that specific role yet — try **Software Engineer**, **Registered Nurse**, or **Product Manager**.`;
       profileRef.current = { ...profileRef.current, salaryAsked: true };
       addBotMsg(RESPONSE_TEMPLATES.salary({ role, estimate: est || "Not available", isSenior, context }));
-      setQuickReplies([`Find ${role} jobs`, "Senior level", "Remote only", "Show similar roles"]);
+      setQuickReplies([`Find ${role} jobs`, "Senior", "Remote only", "Show similar roles"]);
       return;
     }
 
@@ -496,7 +496,7 @@ export default function Home() {
         setCurrentPage(p => p + 1);
         addBotMsg(`Loading next page of results!`);
       }
-      setQuickReplies(["Remote only", "Senior level", "Clear all filters", "Start over"]);
+      setQuickReplies(["Remote only", "Senior", "Clear all filters", "Start over"]);
       return;
     }
     if (/^(broaden\s+search|broaden\s+results?|widen\s+search)$/i.test(tl) || /^show\s+more$/i.test(tl)) {
@@ -516,7 +516,7 @@ export default function Home() {
     //  "Show all N results/jobs" quick reply 
     if (/^show\s+all(\s+\d+)?\s+(results?|jobs?|matches?)$/i.test(tl)) {
       addBotMsg(`Showing all available results in the grid — scroll through and click any card to apply!`);
-      setQuickReplies(["Remote only", "Senior level", "Full time only", "Clear all filters"]);
+      setQuickReplies(["Remote only", "Senior", "Full time only", "Clear all filters"]);
       return;
     }
 
@@ -550,7 +550,7 @@ export default function Home() {
       const est = estimateSalary(role, profile.experience || "");
       addBotMsg(`**Salary negotiation tips for ${role}:**\n\n• **Anchor high**: Start 10–20% above your target${est ? ` — market range is around **${est}**` : ""}\n• **Never go first**: If asked, say *"I'm flexible — what is the budgeted range?"*\n• **Get it in writing**: Always confirm the final offer via email before resigning\n• **Negotiate beyond base**: Consider equity, bonus, remote flexibility, and PTO\n• **Silence is power**: After stating your number, stop talking and let them respond\n\n*Want me to find ${role} jobs with higher compensation?*`);
       profileRef.current = { ...profileRef.current, salaryAsked: true };
-      setQuickReplies([`Find ${role} jobs`, "Senior level", "Remote only", "Clear all filters"]);
+      setQuickReplies([`Find ${role} jobs`, "Senior", "Remote only", "Clear all filters"]);
       return;
     }
 
@@ -595,7 +595,7 @@ export default function Home() {
         setQuickReplies(["Salary negotiation tips", "Clear all filters", "Start over"]);
       } else {
         addBotMsg(`Great move! Applications sent are the name of the game.\n\nWhile you wait to hear back, shall I find a few more ${profile.role || "similar"} roles to keep your pipeline warm?`);
-        setQuickReplies([`More ${profile.role || "jobs"} like this`, "Remote only", "Senior level", "Clear all filters"]);
+        setQuickReplies([`More ${profile.role || "jobs"} like this`, "Remote only", "Senior", "Clear all filters"]);
       }
       return;
     }
@@ -613,7 +613,7 @@ export default function Home() {
       } else {
         addBotMsg(`I can search for **${role}** roles across all companies in the grid!\n\nThe results panel on the right shows live job listings — each card includes the company name.`);
       }
-      setQuickReplies([`Find ${role} jobs`, "Remote only", "Senior level", "Full time only"]);
+      setQuickReplies([`Find ${role} jobs`, "Remote only", "Senior", "Full time only"]);
       return;
     }
 
@@ -718,7 +718,7 @@ export default function Home() {
     setTypingHint(null);
 
     //  Vague query — no actionable signal extracted 
-    const hasSignal = parsed.keyword || parsed.category || parsed.employmentType || parsed.workSchedule;
+    const hasSignal = parsed.keyword || parsed.category || parsed.employmentType || parsed.workSchedule || parsed.experience;
     if (!hasSignal) {
       profileRef.current = { ...profileRef.current, pendingQuestion: "role" };
       addBotMsg(RESPONSE_TEMPLATES.vague());
@@ -781,7 +781,7 @@ export default function Home() {
         );
         setQuickReplies([
           `Show all ${broaderCount} results`,
-          searchFilters.experience ? "Remove experience filter" : "Senior level",
+          searchFilters.experience ? "Remove experience filter" : "Senior",
           "Clear all filters",
         ]);
         // Widen the actual displayed jobs
