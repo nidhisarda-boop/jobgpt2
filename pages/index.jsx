@@ -254,7 +254,7 @@ export default function Home() {
 
   // Sidebar filters (v3: keyword, work location, working schedule, category)
   const [filters, setFilters] = useState({
-    keyword: "", category: "", employmentType: "", schedule: "",
+    keyword: "", category: "", employmentType: "", schedule: "", experience: "",
   });
   const [sortBy,         setSortBy]         = useState("newest");
   const [activeRoleType, setActiveRoleType] = useState(null); // used internally by NLP
@@ -342,6 +342,7 @@ export default function Home() {
       category:       parsed.categoryExplicit ? (parsed.category || prev.category) : prev.category,
       employmentType: normaliseEmploymentType(parsed.employmentType || p.type || prev.employmentType),
       schedule:       parsed.workSchedule   || prev.schedule,
+      experience:     parsed.experience     || p.experience || prev.experience,
     }));
     if (parsed.roleType && parsed.keyword) {
       const rt = ROLE_TYPES.find(r => r.label === parsed.roleType);
@@ -445,7 +446,7 @@ export default function Home() {
 
     //  Action commands 
     if (/\b(clear|reset)\s+(all\s+)?(filters?|search|everything|preferences?|memory|history)\b/i.test(tl) || /^start\s+over$/i.test(tl) || /\b(forget\s+(what\s+you\s+know|everything)|clear\s+my\s+preferences?)\b/i.test(tl)) {
-      setFilters({ keyword:"", category:"", employmentType:"", schedule:"" });
+      setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
       setActiveRoleType(null);
       profileRef.current = { role:null, location:null, type:null, schedule:null, experience:null, category:null, roleType:null, searchCount:0, pendingQuestion:null, salaryAsked:false, previousRole:null };
       setProfileSnap(null);
@@ -480,7 +481,7 @@ export default function Home() {
       return;
     }
     if (/^(broaden\s+search|broaden\s+results?|widen\s+search)$/i.test(tl) || /^show\s+more$/i.test(tl)) {
-      setFilters(prev => ({ ...prev, employmentType:"", schedule:"", category:"" }));
+      setFilters(prev => ({ ...prev, employmentType:"", schedule:"", category:"", experience:"" }));
       profileRef.current = { ...profileRef.current, type:null, schedule:null, category:null };
       addBotMsg(`Broadened the search — showing all **${profile.role || "matching"}** jobs across all work arrangements and categories.`);
       setQuickReplies(["Remote only", "Full time", "Clear all filters"]);
@@ -937,6 +938,22 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Experience */}
+            <div>
+              <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Experience</label>
+              {["Entry level", "Mid level", "Senior level"].map(e => (
+                <label key={e} className="flex items-center gap-2 py-0.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.experience === e}
+                    onChange={() => setFilters(p => ({ ...p, experience: p.experience === e ? "" : e }))}
+                    className="accent-[#D42B2B]"
+                  />
+                  {e}
+                </label>
+              ))}
+            </div>
+
             {/* Category */}
             <div>
               <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Category</label>
@@ -956,7 +973,7 @@ export default function Home() {
             {/* Clear */}
             <button
               onClick={() => {
-                setFilters({ keyword:"", category:"", employmentType:"", schedule:"" });
+                setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
                 setActiveRoleType(null);
               }}
               className="w-full text-xs text-red-500 border border-red-200 rounded-lg py-1.5 hover:bg-red-50 transition"
@@ -1101,7 +1118,7 @@ export default function Home() {
                       onClick={() => {
                         setMessages([{ role: "bot", text: "Hi, I'm Joblet AI. Tell me what kind of job you're looking for and I'll find the best matches for you.\n\nTry: *\"Remote product manager\"* or *\"full time nurse in Chicago\"*" }]);
                         setQuickReplies(["Remote software engineer", "Full time healthcare jobs", "Part-time marketing", "Data analyst hybrid"]);
-                        setFilters({ keyword:"", category:"", employmentType:"", schedule:"" });
+                        setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
                         setActiveRoleType(null);
                         profileRef.current = { role:null, location:null, type:null, schedule:null, experience:null, category:null, roleType:null, searchCount:0, pendingQuestion:null, salaryAsked:false, previousRole:null };
                         setProfileSnap(null);
