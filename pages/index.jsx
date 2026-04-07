@@ -383,12 +383,21 @@ export default function Home() {
     const tl = text.toLowerCase().trim();
     const profile = profileRef.current;
 
-    //  Adversarial / nonsense guard 
+    //  Greeting — check BEFORE nonsense guard so "hi", "hello", "hey" are handled correctly
+    if (/^(hi|hello|hey|howdy|greetings|good\s*(morning|evening|afternoon|night))[\s!?.,]*$/i.test(text)) {
+      const hour = new Date().getHours();
+      const timeGreet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+      addBotMsg(`${timeGreet}! I'm **Joblet AI** — your AI headhunter. Tell me what kind of role you're looking for and I'll get searching!\n\nExamples: *"Remote senior data scientist"*, *"Entry level nurse Chicago"*, or *"Healthcare jobs"*`);
+      setQuickReplies(["Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech"]);
+      return;
+    }
+
+    //  Adversarial / nonsense guard
     const isNonsense = (
-      /^[^a-zA-Z0-9]+$/.test(text) ||                         // only punctuation/emoji
-      /^[a-z]{1,3}$/i.test(text) ||                           // 1-3 random chars
-      /^\d+$/.test(text) ||                                    // only numbers
-      /^(lol|lmao|omg|bruh|hmm|ok|okay|test|hi|hey|yo|sup|yep|nope|idk|asdf|qwerty|xoxo|wtf|meh|ugh|cool|nice|wow|great|thanks|nah|yah|sure|bye|cya)[\s!?.]*$/i.test(text) ||
+      /^[^a-zA-Z0-9]+$/.test(text) ||
+      /^[a-z]{1,3}$/i.test(text) ||
+      /^\d+$/.test(text) ||
+      /^(lol|lmao|omg|bruh|hmm|ok|okay|test|yo|sup|yep|nope|idk|asdf|qwerty|xoxo|wtf|meh|ugh|cool|nice|wow|great|thanks|nah|yah|sure|bye|cya)[\s!?.]*$/i.test(text) ||
       (/^[a-z\s]{1,8}$/i.test(text) && !/\b(job|role|work|engineer|manager|nurse|developer|analyst|designer|teacher|driver|chef|doctor|sales|marketing|finance|tech|remote|hybrid|senior|junior|data|cloud|product)\b/i.test(text))
     );
     if (isNonsense) {
@@ -397,14 +406,6 @@ export default function Home() {
       return;
     }
 
-    //  Greeting 
-    if (/^(hi|hello|hey|howdy|yo|sup|greetings|good\s*(morning|evening|afternoon|night))[\s!?.,]*$/i.test(text)) {
-      const hour = new Date().getHours();
-      const timeGreet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-      addBotMsg(`${timeGreet}! I'm **Joblet AI** — your AI headhunter. Tell me what kind of role you're looking for and I'll get searching!\n\nExamples: *"Remote senior data scientist"*, *"Entry level nurse Chicago"*, or *"Healthcare jobs"*`);
-      setQuickReplies(["Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech"]);
-      return;
-    }
     //  "How does this work / help" 
     if (/\b(how\s+does\s+this\s+work|what\s+can\s+you\s+do|what\s+do\s+you\s+do|how\s+do\s+i\s+use\s+(this|you)|help\s+me\s+find|can\s+you\s+help)\b/i.test(tl)) {
       addBotMsg(`**How Joblet works:**\n\nJust describe your ideal job in plain English — I'll parse it and filter from thousands of live listings.\n\n**Examples:**\n• *"Senior software engineer, remote, 100k+"*\n• *"ICU nurse jobs Chicago"*\n• *"Tech industry jobs"* — browse a whole sector\n• *"What does a PM earn?"* — get salary insights\n\nI also remember your preferences as we chat, so you can refine naturally. Ask me anything!`);
