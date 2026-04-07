@@ -201,15 +201,16 @@ const CAT_NORM = {
   "E-commerce":              "Marketing & Advertising",
   "Others":                  null,   // drop "Others" — don't show in filter
 };
-// Map any experience value → joblet.ai dropdown value
+// Map any experience value → dropdown label
 function normaliseExperienceValue(v) {
   if (!v) return "";
   const l = v.toLowerCase().replace(/[-_\s]/g, " ");
-  if (/senior|lead|principal|staff|7.?10|10\+/.test(l)) return "7-10 Years";
-  if (/mid|intermediate|associate|5.?7/.test(l))         return "5-7 Years";
-  if (/mid|intermediate|associate|2.?5|3.?5/.test(l))    return "2-5 Years";
-  if (/entry|junior|intern|0.?1|1.?2/.test(l))           return "0-1 Years";
-  return v; // pass through if unrecognised
+  if (/gig|freelance|contract|independent|self.?employed/.test(l)) return "Gig-worker";
+  if (/senior|lead|principal|staff|director|vp\b|vice.pres|c.level|c.suite|7.?10|10\+|veteran/.test(l)) return "Senior";
+  if (/mid|intermediate|2.?5|3.?5|5.?7/.test(l))                   return "Mid-level";
+  if (/junior|associate|1.?2|1.?3/.test(l))                         return "Junior";
+  if (/entry|fresher|fresh|intern|new.grad|bootcamp|0.?1|no.exp/.test(l)) return "Fresher";
+  return v;
 }
 
 // Map any employment-type value → sidebar checkbox label
@@ -1022,11 +1023,11 @@ export default function Home() {
                 className="hidden sm:block border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
               >
                 <option value="">Experience</option>
-                <option value="0-1 Years">0-1 Years</option>
-                <option value="2-5 Years">2-5 Years</option>
-                <option value="5-7 Years">5-7 Years</option>
-                <option value="7-10 Years">7-10 Years</option>
-                <option value="10+ Years">10+ Years</option>
+                <option value="Fresher">Fresher</option>
+                <option value="Junior">Junior</option>
+                <option value="Mid-level">Mid-level</option>
+                <option value="Senior">Senior</option>
+                <option value="Gig-worker">Gig-worker</option>
               </select>
               <select
                 value={sortBy}
