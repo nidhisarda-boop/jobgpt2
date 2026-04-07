@@ -685,9 +685,9 @@ export default function Home() {
         parsed = {
           keyword:        llmData.keyword        ?? local.keyword,
           category:       llmData.category       ?? local.category,
-          employmentType: llmData.employmentType ?? local.employmentType,
-          workSchedule:   llmData.workSchedule   ?? local.workSchedule,
-          experience:     llmData.experience     ?? local.experience,
+          employmentType: local.employmentType,  // always use local NLP — LLM infers on-site from job type which is wrong
+          workSchedule:   local.workSchedule   ?? llmData.workSchedule,
+          experience:     llmData.experience   ?? local.experience,
           salaryMin:      llmData.salaryMin      ?? local.salaryMin,
           salaryMax:      llmData.salaryMax      ?? local.salaryMax,
           categoryExplicit: llmData.categoryExplicit ?? local.categoryExplicit ?? false,
