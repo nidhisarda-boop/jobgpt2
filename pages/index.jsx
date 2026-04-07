@@ -281,7 +281,7 @@ export default function Home() {
 
   // Sidebar filters (v3: keyword, work location, working schedule, category)
   const [filters, setFilters] = useState({
-    keyword: "", category: "", employmentType: "", schedule: "", experience: "",
+    keyword: "", category: "", employmentType: "", schedule: "", experience: "", location: "",
   });
   const [sortBy,         setSortBy]         = useState("newest");
   const [activeRoleType, setActiveRoleType] = useState(null); // used internally by NLP
@@ -465,7 +465,7 @@ export default function Home() {
 
     //  Action commands 
     if (/\b(clear|reset)\s+(all\s+)?(filters?|search|everything|preferences?|memory|history)\b/i.test(tl) || /^start\s+over$/i.test(tl) || /\b(forget\s+(what\s+you\s+know|everything)|clear\s+my\s+preferences?)\b/i.test(tl)) {
-      setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
+      setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"", location:"" });
       setActiveRoleType(null);
       profileRef.current = { role:null, location:null, type:null, schedule:null, experience:null, category:null, roleType:null, searchCount:0, pendingQuestion:null, salaryAsked:false, previousRole:null };
       setProfileSnap(null);
@@ -992,7 +992,7 @@ export default function Home() {
             {/* Clear */}
             <button
               onClick={() => {
-                setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
+                setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"", location:"" });
                 setActiveRoleType(null);
               }}
               className="w-full text-xs text-red-500 border border-red-200 rounded-lg py-1.5 hover:bg-red-50 transition"
@@ -1033,6 +1033,18 @@ export default function Home() {
             </div>
             </div>
             <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-1.5 border border-gray-200 rounded-lg px-2 py-1.5">
+                <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <input
+                  value={filters.location}
+                  onChange={e => setFilters(p => ({ ...p, location: e.target.value }))}
+                  placeholder="Location"
+                  className="w-28 text-xs focus:outline-none bg-transparent"
+                />
+                {filters.location && (
+                  <button onClick={() => setFilters(p => ({ ...p, location: "" }))} className="text-gray-400 hover:text-gray-600 text-xs leading-none">&#x2715;</button>
+                )}
+              </div>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
@@ -1137,7 +1149,7 @@ export default function Home() {
                       onClick={() => {
                         setMessages([{ role: "bot", text: "Hi, I'm Joblet AI. Tell me what kind of job you're looking for and I'll find the best matches for you.\n\nTry: *\"Remote product manager\"* or *\"full time nurse in Chicago\"*" }]);
                         setQuickReplies(["Remote software engineer", "Full time healthcare jobs", "Part-time marketing", "Data analyst hybrid"]);
-                        setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"" });
+                        setFilters({ keyword:"", category:"", employmentType:"", schedule:"", experience:"", location:"" });
                         setActiveRoleType(null);
                         profileRef.current = { role:null, location:null, type:null, schedule:null, experience:null, category:null, roleType:null, searchCount:0, pendingQuestion:null, salaryAsked:false, previousRole:null };
                         setProfileSnap(null);
