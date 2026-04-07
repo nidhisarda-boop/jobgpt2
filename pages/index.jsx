@@ -325,6 +325,18 @@ export default function Home() {
     setMessages(prev => [...prev, { role: "bot", text }]);
   }, []);
 
+  const normaliseExperience = (v) => {
+    if (!v) return v;
+    const l = v.toLowerCase();
+    if (l.includes("entry") || l.includes("junior") || l.includes("intern") ||
+        l === "0-1 years" || l === "1-2 years" || l === "1-3 years") return "Entry level";
+    if (l.includes("mid") || l.includes("intermediate") || l.includes("associate") ||
+        l === "2-5 years" || l === "3-5 years" || l === "5-7 years") return "Mid level";
+    if (l.includes("senior") || l.includes("lead") || l.includes("principal") || l.includes("staff") ||
+        l === "7-10 years" || l === "10+ years") return "Senior level";
+    return v;
+  };
+
   const normaliseEmploymentType = (v) => {
     if (!v) return v;
     const l = v.toLowerCase().replace(/[-\s]/g, "");
@@ -342,7 +354,7 @@ export default function Home() {
       category:       parsed.categoryExplicit ? (parsed.category || prev.category) : prev.category,
       employmentType: normaliseEmploymentType(parsed.employmentType || p.type || prev.employmentType),
       schedule:       parsed.workSchedule   || prev.schedule,
-      experience:     parsed.experience     || p.experience || prev.experience,
+      experience:     normaliseExperience(parsed.experience || p.experience || prev.experience),
     }));
     if (parsed.roleType && parsed.keyword) {
       const rt = ROLE_TYPES.find(r => r.label === parsed.roleType);
@@ -714,7 +726,7 @@ export default function Home() {
       role:        parsed.keyword || (parsed.categoryExplicit ? null : prev.role),
       type:        normaliseEmploymentType(parsed.employmentType || prev.type),
       schedule:    parsed.workSchedule                        || prev.schedule,
-      experience:  parsed.experience                          || prev.experience,
+      experience:  normaliseExperience(parsed.experience       || prev.experience),
       category:    (parsed.categoryExplicit ? parsed.category : null) || prev.category,
       searchCount: (prev.searchCount || 0) + 1,
       pendingQuestion: null,
