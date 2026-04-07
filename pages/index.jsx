@@ -201,10 +201,36 @@ const CAT_NORM = {
   "E-commerce":              "Marketing & Advertising",
   "Others":                  null,   // drop "Others" — don't show in filter
 };
+// Map any experience value → joblet.ai dropdown value
+function normaliseExperienceValue(v) {
+  if (!v) return "";
+  const l = v.toLowerCase().replace(/[-_\s]/g, " ");
+  if (/senior|lead|principal|staff|7.?10|10\+/.test(l)) return "7-10 Years";
+  if (/mid|intermediate|associate|5.?7/.test(l))         return "5-7 Years";
+  if (/mid|intermediate|associate|2.?5|3.?5/.test(l))    return "2-5 Years";
+  if (/entry|junior|intern|0.?1|1.?2/.test(l))           return "0-1 Years";
+  return v; // pass through if unrecognised
+}
+
+// Map any employment-type value → sidebar checkbox label
+function normaliseEmploymentTypeValue(v) {
+  if (!v) return v;
+  const l = v.toLowerCase().replace(/[-\s]/g, "");
+  if (l === "onsite" || l === "office" || l === "inoffice") return "In office";
+  if (l === "remote")  return "Remote";
+  if (l === "hybrid")  return "Hybrid";
+  return v;
+}
+
 function normaliseJobs(jobs) {
   return jobs.map(j => {
     const norm = j.category in CAT_NORM ? CAT_NORM[j.category] : j.category;
-    return { ...j, category: norm || null };
+    return {
+      ...j,
+      category:        norm || null,
+      experienceLevel: normaliseExperienceValue(j.experienceLevel),
+      employmentType:  normaliseEmploymentTypeValue(j.employmentType),
+    };
   });
 }
 
@@ -325,25 +351,6 @@ export default function Home() {
     setMessages(prev => [...prev, { role: "bot", text }]);
   }, []);
 
-  const normaliseExperience = (v) => {
-    if (!v) return v;
-    const l = v.toLowerCase();
-    if (l.includes("entry") || l.includes("junior") || l === "0-1 years" || l === "1-2 years" || l === "1-3 years") return "0-1 Years";
-    if (l.includes("mid") || l.includes("intermediate") || l.includes("associate") || l === "2-5 years" || l === "3-5 years") return "2-5 Years";
-    if (l === "5-7 years" || l.includes("experienced")) return "5-7 Years";
-    if (l.includes("senior") || l.includes("lead") || l.includes("principal") || l.includes("staff") || l === "7-10 years") return "7-10 Years";
-    if (l === "10+ years") return "10+ Years";
-    return v;
-  };
-
-  const normaliseEmploymentType = (v) => {
-    if (!v) return v;
-    const l = v.toLowerCase().replace(/[-\s]/g, "");
-    if (l === "onsite" || l === "office" || l === "inoffice") return "In office";
-    if (l === "remote") return "Remote";
-    if (l === "hybrid") return "Hybrid";
-    return v;
-  };
 
   const applyFiltersFromProfile = useCallback((parsed) => {
     const p = profileRef.current;
@@ -351,9 +358,9 @@ export default function Home() {
       ...prev,
       keyword:        parsed.keyword || (parsed.categoryExplicit ? "" : (p.role || prev.keyword)),
       category:       parsed.categoryExplicit ? (parsed.category || prev.category) : prev.category,
-      employmentType: normaliseEmploymentType(parsed.employmentType || p.type || prev.employmentType),
+      employmentType: normaliseEmploymentTypeValue(parsed.employmentType || p.type || prev.employmentType),
       schedule:       parsed.workSchedule   || prev.schedule,
-      experience:     normaliseExperience(parsed.experience || p.experience || prev.experience),
+      experience:     normaliseExperienceValue(parsed.experience || p.experience || prev.experience),
     }));
     if (parsed.roleType && parsed.keyword) {
       const rt = ROLE_TYPES.find(r => r.label === parsed.roleType);
@@ -723,9 +730,9 @@ export default function Home() {
     profileRef.current = {
       ...prev,
       role:        parsed.keyword || (parsed.categoryExplicit ? null : prev.role),
-      type:        normaliseEmploymentType(parsed.employmentType || prev.type),
+      type:        normaliseEmploymentTypeValue(parsed.employmentType || prev.type),
       schedule:    parsed.workSchedule                        || prev.schedule,
-      experience:  normaliseExperience(parsed.experience       || prev.experience),
+      experience:  normaliseExperienceValue(parsed.experience       || prev.experience),
       category:    (parsed.categoryExplicit ? parsed.category : null) || prev.category,
       searchCount: (prev.searchCount || 0) + 1,
       pendingQuestion: null,
