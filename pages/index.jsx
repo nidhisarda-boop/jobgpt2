@@ -328,12 +328,11 @@ export default function Home() {
   const normaliseExperience = (v) => {
     if (!v) return v;
     const l = v.toLowerCase();
-    if (l.includes("entry") || l.includes("junior") || l.includes("intern") ||
-        l === "0-1 years" || l === "1-2 years" || l === "1-3 years") return "Entry level";
-    if (l.includes("mid") || l.includes("intermediate") || l.includes("associate") ||
-        l === "2-5 years" || l === "3-5 years" || l === "5-7 years") return "Mid level";
-    if (l.includes("senior") || l.includes("lead") || l.includes("principal") || l.includes("staff") ||
-        l === "7-10 years" || l === "10+ years") return "Senior level";
+    if (l.includes("entry") || l.includes("junior") || l === "0-1 years" || l === "1-2 years" || l === "1-3 years") return "0-1 Years";
+    if (l.includes("mid") || l.includes("intermediate") || l.includes("associate") || l === "2-5 years" || l === "3-5 years") return "2-5 Years";
+    if (l === "5-7 years" || l.includes("experienced")) return "5-7 Years";
+    if (l.includes("senior") || l.includes("lead") || l.includes("principal") || l.includes("staff") || l === "7-10 years") return "7-10 Years";
+    if (l === "10+ years") return "10+ Years";
     return v;
   };
 
@@ -950,22 +949,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Experience */}
-            <div>
-              <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Experience</label>
-              {["Entry level", "Mid level", "Senior level"].map(e => (
-                <label key={e} className="flex items-center gap-2 py-0.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.experience === e}
-                    onChange={() => setFilters(p => ({ ...p, experience: p.experience === e ? "" : e }))}
-                    className="accent-[#D42B2B]"
-                  />
-                  {e}
-                </label>
-              ))}
-            </div>
-
             {/* Category */}
             <div>
               <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Category</label>
@@ -1026,6 +1009,18 @@ export default function Home() {
             </div>
             </div>
             <div className="flex items-center gap-2">
+              <select
+                value={filters.experience}
+                onChange={e => setFilters(p => ({ ...p, experience: e.target.value }))}
+                className="hidden sm:block border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
+              >
+                <option value="">Experience</option>
+                <option value="0-1 Years">0-1 Years</option>
+                <option value="2-5 Years">2-5 Years</option>
+                <option value="5-7 Years">5-7 Years</option>
+                <option value="7-10 Years">7-10 Years</option>
+                <option value="10+ Years">10+ Years</option>
+              </select>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
