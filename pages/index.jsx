@@ -362,6 +362,7 @@ export default function Home() {
       employmentType: normaliseEmploymentTypeValue(parsed.employmentType || p.type || prev.employmentType),
       schedule:       parsed.workSchedule   || prev.schedule,
       experience:     normaliseExperienceValue(parsed.experience || p.experience || prev.experience),
+      location:       parsed.location       || prev.location,
     }));
     if (parsed.roleType && parsed.keyword) {
       const rt = ROLE_TYPES.find(r => r.label === parsed.roleType);
