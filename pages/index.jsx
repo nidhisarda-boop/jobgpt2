@@ -1,5 +1,5 @@
 // pages/index.jsx
-// JobGPT 2.0 — Next.js main page
+// JobGPTv3 — Next.js main page
 // All Nova intelligence features: parallel fetch, NLP, confidence scoring,
 // A/B testing, typed response templates, postProcess quick replies
 
@@ -857,8 +857,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Joblet.ai — AI Job Search</title>
-        <meta name="description" content="AI-powered job search with multi-turn memory and Nova intelligence" />
+        <title>JobGPTv3 — AI Job Search by Joblet</title>
+        <meta name="description" content="JobGPTv3 — AI-powered conversational job search with multi-turn memory and 10-provider intelligence" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 

@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
       return fetch(url.toString(), {
         signal: AbortSignal.timeout(8000),
-        headers: { "User-Agent": "JobGPT2/1.0" },
+        headers: { "User-Agent": "JobGPTv3/1.0" },
       })
         .then(r => r.ok ? r.json() : null)
         .then(json => json?.data?.jobs || [])
