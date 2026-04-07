@@ -957,6 +957,22 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Experience */}
+            <div>
+              <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Experience</label>
+              {["Fresher", "Junior", "Mid-level", "Senior", "Gig-worker"].map(e => (
+                <label key={e} className="flex items-center gap-2 py-0.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.experience === e}
+                    onChange={() => setFilters(p => ({ ...p, experience: p.experience === e ? "" : e }))}
+                    className="accent-[#D42B2B]"
+                  />
+                  {e}
+                </label>
+              ))}
+            </div>
+
             {/* Category */}
             <div>
               <label className="block font-semibold text-gray-500 uppercase tracking-wide text-[10px] mb-1">Category</label>
@@ -1017,18 +1033,6 @@ export default function Home() {
             </div>
             </div>
             <div className="flex items-center gap-2">
-              <select
-                value={filters.experience}
-                onChange={e => setFilters(p => ({ ...p, experience: e.target.value }))}
-                className="hidden sm:block border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-[#D42B2B]"
-              >
-                <option value="">Experience</option>
-                <option value="Fresher">Fresher</option>
-                <option value="Junior">Junior</option>
-                <option value="Mid-level">Mid-level</option>
-                <option value="Senior">Senior</option>
-                <option value="Gig-worker">Gig-worker</option>
-              </select>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
