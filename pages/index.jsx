@@ -127,7 +127,7 @@ function MsgBubble({ msg }) {
     <div className={`flex ${isBot ? "justify-start" : "justify-end"} mb-2`}>
       {isBot && (
         <div className="w-7 h-7 rounded-full bg-[#F0EBEB] border border-[#D42B2B]/20 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5 select-none overflow-hidden">
-          <img src="/logos/joblet-mark-icon.png" alt="J" className="w-5 h-5 object-contain" />
+          <img src="/logos/joblet-mark-transparent.png" alt="J" className="w-5 h-5 object-contain" />
         </div>
       )}
       <div
@@ -162,7 +162,7 @@ function TypingIndicator({ hint }) {
   return (
     <div className="flex justify-start mb-2">
       <div className="w-7 h-7 rounded-full bg-[#F0EBEB] border border-[#D42B2B]/20 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5 overflow-hidden">
-        <img src="/logos/joblet-mark-icon.png" alt="J" className="w-5 h-5 object-contain" />
+        <img src="/logos/joblet-mark-transparent.png" alt="J" className="w-5 h-5 object-contain" />
       </div>
       <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-2 min-w-[180px] shadow-sm">
         <span className="typing-dot" /><span className="typing-dot" /><span className="typing-dot" />
