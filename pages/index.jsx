@@ -12,10 +12,10 @@ import {
   getSimilarRoles, getProactiveTip, getHeadhunterQuestion, getMarketIntel,
 } from "../lib/nlp";
 
-// ── A/B variant (per session) ─────────────────────────────────
+//  A/B variant (per session) 
 const AB_VARIANT = typeof window !== "undefined" && Math.random() < 0.5 ? "A" : "B";
 
-// ── Fallback demo jobs (used when API is unavailable) ─────────
+//  Fallback demo jobs (used when API is unavailable) 
 const DEMO_JOBS = [
   { id:"d1",  title:"Senior Software Engineer",   company:"TechCorp",        location:"San Francisco, CA",  category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior level",  description:"Full-stack React + Node.js",       applyUrl:"#" },
   { id:"d2",  title:"Product Manager",            company:"StartupXYZ",      location:"New York, NY",       category:"Technology",         employmentType:"Hybrid",  experienceLevel:"Mid level",     description:"Lead product strategy for B2B SaaS", applyUrl:"#" },
@@ -35,7 +35,7 @@ const DEMO_JOBS = [
   { id:"d16", title:"Cloud Architect",            company:"AWS",             location:"Seattle, WA",        category:"Technology",         employmentType:"Remote",  experienceLevel:"Senior level",  description:"Design cloud solutions for enterprise", applyUrl:"#" },
 ];
 
-// ── Shared helpers ────────────────────────────────────────────
+//  Shared helpers 
 const typeColor = {
   Remote:   "bg-green-100 text-green-700",
   Hybrid:   "bg-blue-100 text-blue-700",
@@ -49,9 +49,9 @@ function timeAgo(hours) {
   return `${days}d ago`;
 }
 
-// ═══════════════════════════════════════════════════════════
+// 
 // COMPONENTS
-// ═══════════════════════════════════════════════════════════
+// 
 
 // Company logo placeholder with initials
 function CompanyInitials({ name }) {
@@ -172,7 +172,7 @@ function TypingIndicator({ hint }) {
   );
 }
 
-// ── Category normalisation map (API → standard names) ──────
+//  Category normalisation map (API → standard names) 
 const CAT_NORM = {
   // old names → new standard names
   "Sales & Marketing":       "Marketing & Advertising",
@@ -208,7 +208,7 @@ function normaliseJobs(jobs) {
   });
 }
 
-// ── v3: fixed category list matching joblet.ai ──────────────────────────────
+//  v3: fixed category list matching joblet.ai 
 const V3_CATEGORIES = [
   "Technology & IT",
   "Finance & Banking",
@@ -227,11 +227,11 @@ const V3_CATEGORIES = [
   "Hospitality & Travel",
 ];
 
-// ═══════════════════════════════════════════════════════════
+// 
 // MAIN PAGE
-// ═══════════════════════════════════════════════════════════
+// 
 export default function Home() {
-  // ── State ───────────────────────────────────────────────
+  //  State 
   const [allJobs,      setAllJobs]      = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [isLoading,    setIsLoading]    = useState(true);
@@ -271,12 +271,12 @@ export default function Home() {
 
   const messagesEndRef = useRef(null);
 
-  // ── Auto-scroll chat ─────────────────────────────────────
+  //  Auto-scroll chat 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // ── Load jobs via Next.js API route ──────────────────────
+  //  Load jobs via Next.js API route 
   useEffect(() => {
     const load = async () => {
       setIsLoading(true);
@@ -301,7 +301,7 @@ export default function Home() {
     load();
   }, []);
 
-  // ── Apply sidebar filters reactively ─────────────────────
+  //  Apply sidebar filters reactively 
   useEffect(() => {
     let result = filterJobs(allJobs, filters);
     if (activeRoleType) {
@@ -320,7 +320,7 @@ export default function Home() {
     setCurrentPage(1);
   }, [allJobs, filters, sortBy, activeRoleType]);
 
-  // ── Chat helpers ─────────────────────────────────────────
+  //  Chat helpers 
   const addBotMsg = useCallback((text) => {
     setMessages(prev => [...prev, { role: "bot", text }]);
   }, []);
@@ -342,7 +342,7 @@ export default function Home() {
     }
   }, []);
 
-  // ── SEND CHAT ─────────────────────────────────────────────
+  //  SEND CHAT 
   const sendChat = useCallback(async (rawText) => {
     const text = (rawText !== undefined ? rawText : input).trim();
     if (!text) return;
@@ -353,7 +353,7 @@ export default function Home() {
     const tl = text.toLowerCase().trim();
     const profile = profileRef.current;
 
-    // ── Adversarial / nonsense guard ──────────────────────
+    //  Adversarial / nonsense guard 
     const isNonsense = (
       /^[^a-zA-Z0-9]+$/.test(text) ||                         // only punctuation/emoji
       /^[a-z]{1,3}$/i.test(text) ||                           // 1-3 random chars
@@ -367,7 +367,7 @@ export default function Home() {
       return;
     }
 
-    // ── Greeting ──────────────────────────────────────────
+    //  Greeting 
     if (/^(hi|hello|hey|howdy|yo|sup|greetings|good\s*(morning|evening|afternoon|night))[\s!?.,]*$/i.test(text)) {
       const hour = new Date().getHours();
       const timeGreet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -375,21 +375,21 @@ export default function Home() {
       setQuickReplies(["Remote software engineer", "Entry level marketing", "Part-time nursing NYC", "Senior PM at fintech"]);
       return;
     }
-    // ── "How does this work / help" ───────────────────────
+    //  "How does this work / help" 
     if (/\b(how\s+does\s+this\s+work|what\s+can\s+you\s+do|what\s+do\s+you\s+do|how\s+do\s+i\s+use\s+(this|you)|help\s+me\s+find|can\s+you\s+help)\b/i.test(tl)) {
       addBotMsg(`**How Joblet works:**\n\nJust describe your ideal job in plain English — I'll parse it and filter from thousands of live listings.\n\n**Examples:**\n• *"Senior software engineer, remote, 100k+"*\n• *"ICU nurse jobs Chicago"*\n• *"Tech industry jobs"* — browse a whole sector\n• *"What does a PM earn?"* — get salary insights\n\nI also remember your preferences as we chat, so you can refine naturally. Ask me anything!`);
       setQuickReplies(["Remote software engineer", "Healthcare jobs", "Entry level marketing", "Senior product manager"]);
       return;
     }
 
-    // ── Spam ──────────────────────────────────────────────
+    //  Spam 
     if (isSpam(tl) || /\b(make\s+money\s+fast|get\s+rich\s+quick|pyramid\s+scheme|mlm|adult\s+job|onlyfans|easy\s+money|no\s+experience\s+needed\s+\$)\b/i.test(tl)) {
       addBotMsg(RESPONSE_TEMPLATES.spam());
       setQuickReplies(["Software Engineer", "Marketing Manager", "Data Analyst", "Registered Nurse"]);
       return;
     }
 
-    // ── Salary query ───────────────────────────────────────
+    //  Salary query 
     if (/\b(what\s+(salary|pay|wage|does\s+\w+\s+make|can\s+i\s+earn)|how\s+much\s+(does|do|can|will|does\s+a)|salary\s+(for|of|range|estimate)|pay\s+(scale|range)|average\s+salary|what\s+do\s+they\s+pay|good\s+pay|salary\s+expectation)\b/i.test(tl) ||
         (/\b(salary|pay|earn|income|wage|compensation)\b/i.test(tl) && /\b(what|how|much|range|estimate|average|expect|good)\b/i.test(tl))) {
       setIsTyping(true);
@@ -415,7 +415,7 @@ export default function Home() {
       return;
     }
 
-    // ── Career pivot / transition — headhunter response ──
+    //  Career pivot / transition — headhunter response 
     if (/\b(switch\s+career|change\s+(career|field|industry)|move\s+into|transition\s+(to|into)|pivot\s+to|want\s+to\s+become|from\s+\w+\s+to\s+\w+)\b/i.test(tl)) {
       const parsed = parseJobQuery(text);
       // If we already extracted a target role from the pivot phrase, search for it directly
@@ -424,7 +424,7 @@ export default function Home() {
         const toRole = parsed.keyword;
         profileRef.current = { ...profile, previousRole: profile.role, pendingQuestion: null };
         addBotMsg(RESPONSE_TEMPLATES.career_pivot({ from: fromRole, to: toRole }));
-        setQuickReplies([toRole.charAt(0).toUpperCase()+toRole.slice(1), `Remote ${toRole}`, "Entry level", "Add a location"]);
+        setQuickReplies([toRole.charAt(0).toUpperCase()+toRole.slice(1), `Remote ${toRole}`, "Entry level", "Full time only"]);
         applyFiltersFromProfile(parsed);
         return;
       }
@@ -434,7 +434,7 @@ export default function Home() {
       return;
     }
 
-    // ── Action commands ────────────────────────────────────
+    //  Action commands 
     if (/\b(clear|reset)\s+(all\s+)?(filters?|search|everything|preferences?|memory|history)\b/i.test(tl) || /^start\s+over$/i.test(tl) || /\b(forget\s+(what\s+you\s+know|everything)|clear\s+my\s+preferences?)\b/i.test(tl)) {
       setFilters({ keyword:"", category:"", employmentType:"", schedule:"" });
       setActiveRoleType(null);
@@ -457,7 +457,7 @@ export default function Home() {
       setQuickReplies(["Full time only", "Part time", "Clear all filters"]);
       return;
     }
-    // ── "Next page / show more results" — paginate ────────
+    //  "Next page / show more results" — paginate 
     if (/\b(next\s+page|show\s+more\s+(results?|jobs?)|more\s+results?|page\s+(\d+|next)|load\s+more)\b/i.test(tl) || /^next\s+page\s*→?$/i.test(tl)) {
       const numMatch = tl.match(/page\s+(\d+)/i);
       if (numMatch) {
@@ -484,14 +484,14 @@ export default function Home() {
       setQuickReplies(["Full time", "Clear all filters", "Start over"]);
       return;
     }
-    // ── "Show all N results/jobs" quick reply ─────────────
+    //  "Show all N results/jobs" quick reply 
     if (/^show\s+all(\s+\d+)?\s+(results?|jobs?|matches?)$/i.test(tl)) {
       addBotMsg(`Showing all available results in the grid — scroll through and click any card to apply!`);
-      setQuickReplies(["Remote only", "Senior level", "Add a location", "Clear all filters"]);
+      setQuickReplies(["Remote only", "Senior level", "Full time only", "Clear all filters"]);
       return;
     }
 
-    // ── Resume tips ───────────────────────────────────────
+    //  Resume tips 
     if (/\b(resume\s+(tips?|help|advice|review|feedback|improve|optimize|write)|how\s+to\s+(write|improve|fix|optimize)\s+(my\s+)?resume|cv\s+tips?|make\s+my\s+resume\s+better)\b/i.test(tl)) {
       const role = profile.role || "your target role";
       const isTech = /\b(engineer|developer|data|ml|devops|cloud|product|software)\b/i.test(role);
@@ -503,7 +503,7 @@ export default function Home() {
       return;
     }
 
-    // ── Interview prep ────────────────────────────────────
+    //  Interview prep 
     if (/\b(interview\s+(prep|preparation|tips?|questions?|help|advice)|prepare\s+for\s+(the\s+)?interview|how\s+to\s+(ace|pass|nail)\s+(the\s+)?interview)\b/i.test(tl)) {
       const role = profile.role || "this role";
       const isTech = /\b(engineer|developer|data|ml|devops|cloud|product|software)\b/i.test(role);
@@ -515,7 +515,7 @@ export default function Home() {
       return;
     }
 
-    // ── Salary negotiation tips ───────────────────────────
+    //  Salary negotiation tips 
     if (/\b(how\s+(do\s+i|to)\s+negotiate|salary\s+negotiat|negotiat\s+salary|negotiate\s+my\s+(pay|comp|offer)|counter\s+offer)\b/i.test(tl)) {
       const role = profile.role || "your role";
       const est = estimateSalary(role, profile.experience || "");
@@ -525,7 +525,7 @@ export default function Home() {
       return;
     }
 
-    // ── Cover letter tips ─────────────────────────────────
+    //  Cover letter tips 
     if (/\b(cover\s+letter\s+(tips?|help|advice|write|template|example|format)|write\s+(a\s+)?cover\s+letter|how\s+to\s+(write|draft|start)\s+(a\s+)?cover\s+letter)\b/i.test(tl)) {
       const role = profile.role || "your target role";
       addBotMsg(`**Cover letter tips for ${role}:**\n\n• **Hook in line 1**: Start with why you're excited about *this specific company*, not just the role\n• **3-paragraph structure**: Why them → What you bring → Call to action\n• **Mirror the job description**: Use their exact language (ATS loves it)\n• **Quantify one achievement**: *"I grew pipeline by 40%..."* is gold\n• **Keep it under 300 words**: Hiring managers don't read long letters\n• **End with confidence**: *"I'd love to chat about how I can help [Company] achieve X"*\n\n*Want me to find more ${role} roles to apply to?*`);
@@ -533,18 +533,18 @@ export default function Home() {
       return;
     }
 
-    // ── "What's trending / in demand / hot roles" ─────────
+    //  "What's trending / in demand / hot roles" 
     if (/\b(what\s+(roles?|jobs?)\s+(are\s+)?(trending|in\s+demand|hot|popular)|trending\s+(roles?|jobs?)|most\s+(in\s+demand|wanted|sought)\s+(roles?|jobs?)|what\s+(should\s+i|to)\s+(target|look\s+for)|hot\s+(jobs?|roles?|skills?))\b/i.test(tl)) {
       const highDemand = [
-        ["Machine Learning Engineer", "🔥 Explosive growth"],
-        ["DevOps Engineer", "🔥 Very high demand"],
-        ["Cloud Architect", "🔥 Very high demand"],
-        ["Security Engineer", "🔥 Critical need"],
-        ["Registered Nurse", "🔥 Critical shortage"],
-        ["Software Engineer", "🔥 Very high demand"],
-        ["Product Manager", "🔥 Very high demand"],
-        ["Truck Driver", "🔥 Driver shortage"],
-        ["Electrician", "🔥 Skilled trade shortage"],
+        ["Machine Learning Engineer", " Explosive growth"],
+        ["DevOps Engineer", " Very high demand"],
+        ["Cloud Architect", " Very high demand"],
+        ["Security Engineer", " Critical need"],
+        ["Registered Nurse", " Critical shortage"],
+        ["Software Engineer", " Very high demand"],
+        ["Product Manager", " Very high demand"],
+        ["Truck Driver", " Driver shortage"],
+        ["Electrician", " Skilled trade shortage"],
       ];
       const roleList = highDemand.map(([r, d]) => `• **${r}** — ${d}`).join("\n");
       addBotMsg(`**Hottest roles right now:**\n\n${roleList}\n\nWant me to search any of these? Just ask!`);
@@ -552,15 +552,14 @@ export default function Home() {
       return;
     }
 
-    // ── "Hiring near me" ──────────────────────────────────
+    //  "Hiring near me" 
     if (/\b(near\s+me|close\s+to\s+me|my\s+(area|city|location)|local\s+(jobs?|work|roles?))\b/i.test(tl)) {
-      profileRef.current = { ...profileRef.current, pendingQuestion: "location" };
-      addBotMsg(`I don't have access to your GPS, but I can filter by city! Which city are you in?\n\n*Just type the city name and I'll find jobs near you.*`);
-      setQuickReplies(["New York", "Los Angeles", "Chicago", "Houston", "Remote work"]);
+      addBotMsg(`Location-based filtering isn't available yet, but you can use the **Work Location** filter in the sidebar to find Remote, Hybrid, or In office roles.\n\nWant me to search for remote jobs?`);
+      setQuickReplies(["Remote jobs", "Hybrid jobs", "In office jobs", "Clear all filters"]);
       return;
     }
 
-    // ── "I applied" / "I got the job" ────────────────────
+    //  "I applied" / "I got the job" 
     if (/\b(i\s+(applied|submitted|sent\s+my\s+application)|i\s+got\s+(the\s+)?job|i\s+got\s+an?\s+(offer|interview|callback))\b/i.test(tl)) {
       if (/got\s+(the\s+)?job|got\s+an?\s+offer/i.test(tl)) {
         addBotMsg(`**Congratulations!** That's fantastic news — well done!\n\nWhen you're ready to negotiate your offer, I can share some tips. And if you ever need to search again in the future, I'll be here!`);
@@ -572,7 +571,7 @@ export default function Home() {
       return;
     }
 
-    // ── "What companies are hiring X" ────────────────────
+    //  "What companies are hiring X" 
     if (/\b(what\s+companies?\s+(are\s+)?(hiring|looking\s+for)|which\s+companies?\s+(are\s+)?(hiring|recruiting)|who\s+is\s+hiring)\b/i.test(tl)) {
       const role = profile.role || parseJobQuery(text).keyword || "that role";
       const companyNames = [...new Set(
@@ -585,11 +584,11 @@ export default function Home() {
       } else {
         addBotMsg(`I can search for **${role}** roles across all companies in the grid!\n\nThe results panel on the right shows live job listings — each card includes the company name.`);
       }
-      setQuickReplies([`Find ${role} jobs`, "Remote only", "Senior level", "Add a location"]);
+      setQuickReplies([`Find ${role} jobs`, "Remote only", "Senior level", "Full time only"]);
       return;
     }
 
-    // ── "Tell me more" / "more details" ──────────────────
+    //  "Tell me more" / "more details" 
     if (/^(tell\s+me\s+more|more\s+details?|expand\s+on\s+(that|this)|what\s+else|show\s+me\s+more)$/i.test(tl)) {
       const role = profile.role || "this role";
       const intel = getMarketIntel(role);
@@ -605,7 +604,7 @@ export default function Home() {
       setQuickReplies(["Interview prep", "Salary negotiation tips", "Show similar roles", "Remote only"]);
       return;
     }
-    // ── "More like [role]" quick reply ────────────────────
+    //  "More like [role]" quick reply 
     if (/^more\s+like\s+/i.test(tl)) {
       const roleHint = tl.replace(/^more\s+like\s+/i, "").trim();
       const similar = getSimilarRoles(roleHint || profile.role || "");
@@ -635,23 +634,14 @@ export default function Home() {
       return;
     }
 
-    // ── Pending follow-up answers ──────────────────────────
-    if (profile.pendingQuestion === "location") {
-      const parsed = parseJobQuery(text);
-      const loc = parsed.location || text.trim();
-      profileRef.current = { ...profile, location: loc, pendingQuestion: null };
-      setFilters(prev => ({ ...prev, location: loc }));
-      addBotMsg(`Got it — searching in **${loc}**! Results updated.`);
-      setQuickReplies(["Remote only", "Senior level", "Clear all filters", "Start over"]);
-      return;
-    }
+    //  Pending follow-up answers 
     if (profile.pendingQuestion === "role") {
       const parsed = parseJobQuery(text);
       profileRef.current = { ...profile, role: parsed.keyword || text, pendingQuestion: null };
       applyFiltersFromProfile({ ...parsed, keyword: parsed.keyword || text });
     }
 
-    // ── NLP: LLM first (Nova routing pattern), parseJobQuery as fallback ──
+    //  NLP: LLM first (Nova routing pattern), parseJobQuery as fallback 
     let parsed;
     try {
       const llmRes = await fetch("/api/nlp", {
@@ -665,7 +655,6 @@ export default function Home() {
         const local = parseJobQuery(text);
         parsed = {
           keyword:        llmData.keyword        ?? local.keyword,
-          location:       llmData.location       ?? local.location,
           category:       llmData.category       ?? local.category,
           employmentType: llmData.employmentType ?? local.employmentType,
           experience:     llmData.experience     ?? local.experience,
@@ -688,8 +677,7 @@ export default function Home() {
                   : complexity === "standard" ? 650 + Math.random()*350
                   :                             380 + Math.random()*250;
     // Context-aware typing hint
-    const hint = parsed.location ? `Looking in ${parsed.location}…`
-               : parsed.employmentType === "Remote" ? "Finding remote roles…"
+    const hint = parsed.employmentType === "Remote" ? "Finding remote roles…"
                : parsed.keyword ? `Matching ${parsed.keyword} roles…`
                : parsed.category ? `Browsing ${parsed.category}…`
                : null;
@@ -699,7 +687,7 @@ export default function Home() {
     setIsTyping(false);
     setTypingHint(null);
 
-    // ── Vague query — no actionable signal extracted ──────
+    //  Vague query — no actionable signal extracted 
     const hasSignal = parsed.keyword || parsed.category || parsed.employmentType || parsed.workSchedule;
     if (!hasSignal) {
       profileRef.current = { ...profileRef.current, pendingQuestion: "role" };
@@ -708,12 +696,11 @@ export default function Home() {
       return;
     }
 
-    // ── Merge profile ──────────────────────────────────────
+    //  Merge profile 
     const prev = profileRef.current;
     profileRef.current = {
       ...prev,
       role:        parsed.keyword || (parsed.categoryExplicit ? null : prev.role),
-      location:    parsed.location                            || prev.location,
       type:        parsed.employmentType                      || prev.type,
       schedule:    parsed.workSchedule                        || prev.schedule,
       experience:  parsed.experience                          || prev.experience,
@@ -727,7 +714,7 @@ export default function Home() {
     const newProfile = profileRef.current;
     const confidence = scoreSearch(parsed, newProfile);
 
-    // ── Hybrid scoring — rank by relevance (items 3 & 4 of todo) ──
+    //  Hybrid scoring — rank by relevance (items 3 & 4 of todo) 
     const searchFilters = {
       keyword:        parsed.keyword || (parsed.categoryExplicit ? null : newProfile.role),
       category:       parsed.categoryExplicit ? (parsed.category || newProfile.category) : null,
@@ -747,7 +734,7 @@ export default function Home() {
       ? `Got it — searching for ${parts.join(", ")}!`
       : "On it!";
 
-    // ── 0-results: progressive recovery (item 2) ─────────────
+    //  0-results: progressive recovery (item 2) 
     if (matchCount === 0) {
       // Step 1: try keyword-only (drop location/experience/type filters)
       const kwOnly = rankJobs(allJobs, { keyword: searchFilters.keyword });
@@ -759,17 +746,16 @@ export default function Home() {
         const topPick = kwOnly[0];
         addBotMsg(
           `${confirmMsg}\n\nNo exact match with all your filters, but I found **${broaderCount} ${searchFilters.keyword || "related"} jobs** with slightly relaxed criteria.\n\n` +
-          `Top result: **${topPick.title}** at ${topPick.company} — ${topPick.location}\n\n` +
+          `Top result: **${topPick.title}** at ${topPick.company}\n\n` +
           `Would you like to see all of them?`
         );
         setQuickReplies([
           `Show all ${broaderCount} results`,
-          searchFilters.location ? "Remove location filter" : "Add a location",
           searchFilters.experience ? "Remove experience filter" : "Senior level",
           "Clear all filters",
         ]);
         // Widen the actual displayed jobs
-        setFilters(prev => ({ ...prev, experience: "", location: searchFilters.location ? prev.location : "" }));
+        setFilters(prev => ({ ...prev, experience: "" }));
       } else if (similar.length > 0) {
         addBotMsg(
           `${confirmMsg}\n\nSorry, no openings found for **${searchFilters.keyword || "that role"}** right now. Here are some related roles that may interest you:\n\n${similar.slice(0, 4).map(r => `• **${r}**`).join("\n")}`
@@ -782,7 +768,7 @@ export default function Home() {
         setQuickReplies(["Clear all filters", "Remote jobs", "Software Engineer", "Healthcare jobs"]);
       }
 
-    // ── Results found: show + proactive steering (items 1 & 3) ─
+    //  Results found: show + proactive steering (items 1 & 3) 
     } else {
       const preview = matchedJobs.slice(0, 3).map(j => {
         const sal = estimateSalary(j.title, j.experienceLevel);
@@ -820,14 +806,14 @@ export default function Home() {
 
   }, [input, allJobs, addBotMsg, applyFiltersFromProfile]);
 
-  // ── Pagination ────────────────────────────────────────────
+  //  Pagination 
   const totalPages  = Math.ceil(filteredJobs.length / PAGE_SIZE);
   const pagedJobs   = filteredJobs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  // ── Categories for sidebar ────────────────────────────────
+  //  Categories for sidebar 
   // v3: use fixed category list instead of dynamic derivation from API data
 
-  // ── Render ────────────────────────────────────────────────
+  //  Render 
   return (
     <>
       <Head>
@@ -838,7 +824,7 @@ export default function Home() {
 
       <div className="flex h-screen bg-[#F5F0EC] font-sans overflow-hidden">
 
-        {/* ── MOBILE SIDEBAR OVERLAY ─────────────────────── */}
+        {/*  MOBILE SIDEBAR OVERLAY  */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -846,7 +832,7 @@ export default function Home() {
           />
         )}
 
-        {/* ── SIDEBAR ────────────────────────────────────── */}
+        {/*  SIDEBAR  */}
         <aside className={`
           fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 flex flex-col overflow-y-auto
           transform transition-transform duration-200
@@ -871,7 +857,7 @@ export default function Home() {
             >×</button>
           </div>
 
-          {/* ── Profile Memory Widget ───────────────── */}
+          {/*  Profile Memory Widget  */}
           {profileSnap && (profileSnap.role || profileSnap.location || profileSnap.type || profileSnap.experience) && (
             <div className="mx-3 mt-2 mb-1 bg-[#F0EBEB] border border-[#D42B2B]/20 rounded-xl p-2.5 text-xs">
               <div className="flex items-center justify-between mb-1.5">
@@ -885,7 +871,7 @@ export default function Home() {
                   }}
                   className="text-[10px] text-[#D42B2B]/50 hover:text-[#D42B2B] transition"
                   title="Clear memory"
-                >✕ Clear</button>
+                > Clear</button>
               </div>
               <div className="space-y-0.5 text-gray-600">
                 {profileSnap.role     && <div><span className="text-[#D42B2B]/70">Role:</span> {profileSnap.role}</div>}
@@ -970,7 +956,7 @@ export default function Home() {
           </div>
         </aside>
 
-        {/* ── MAIN CONTENT ────────────────────────────────── */}
+        {/*  MAIN CONTENT  */}
         <main className="flex-1 flex flex-col overflow-hidden bg-[#F5F0EC]">
 
           {/* Top bar */}
@@ -1014,7 +1000,7 @@ export default function Home() {
                 className="bg-[#D42B2B] text-white text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-[#B82424] transition flex items-center gap-1.5"
               >
                 <span className="hidden sm:inline">{chatOpen ? "Hide chat" : "Chat"}</span>
-                <span className="sm:hidden">{chatOpen ? "✕" : "Chat"}</span>
+                <span className="sm:hidden">{chatOpen ? "" : "Chat"}</span>
               </button>
             </div>
           </div>
@@ -1034,7 +1020,7 @@ export default function Home() {
               ) : filteredJobs.length === 0 ? (
                 <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
                   <div className="text-center">
-                    <div className="text-3xl mb-3">🔍</div>
+                    <div className="text-3xl mb-3"></div>
                     <p className="font-medium">No jobs match your filters</p>
                     <p className="text-xs mt-1">Try broadening your search or clearing filters</p>
                   </div>
@@ -1079,7 +1065,7 @@ export default function Home() {
               )}
             </div>
 
-            {/* ── CHAT PANEL ──────────────────────────────── */}
+            {/*  CHAT PANEL  */}
             {chatOpen && (
               <div className="fixed inset-0 z-30 bg-[#FDFBF9] flex flex-col md:relative md:inset-auto md:z-auto md:w-80 md:flex-shrink-0 md:border-l md:border-gray-100">
 
@@ -1096,7 +1082,7 @@ export default function Home() {
                     <div className="font-semibold text-sm text-[#1A1A1A]">
                       <span>job</span><span className="text-[#D42B2B]">let</span><span>.ai</span>
                     </div>
-                    <div className="text-[11px] text-green-600">● Online</div>
+                    <div className="text-[11px] text-green-600"> Online</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1155,7 +1141,7 @@ export default function Home() {
                     disabled={isTyping}
                     className="bg-[#D42B2B] text-white rounded-xl px-3 py-2 text-sm font-bold hover:bg-[#B82424] disabled:opacity-50 transition"
                   >
-                    ➤
+                    
                   </button>
                 </div>
               </div>
