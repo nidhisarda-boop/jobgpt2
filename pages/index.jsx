@@ -325,13 +325,22 @@ export default function Home() {
     setMessages(prev => [...prev, { role: "bot", text }]);
   }, []);
 
+  const normaliseEmploymentType = (v) => {
+    if (!v) return v;
+    const l = v.toLowerCase().replace(/[-\s]/g, "");
+    if (l === "onsite" || l === "office" || l === "inoffice") return "In office";
+    if (l === "remote") return "Remote";
+    if (l === "hybrid") return "Hybrid";
+    return v;
+  };
+
   const applyFiltersFromProfile = useCallback((parsed) => {
     const p = profileRef.current;
     setFilters(prev => ({
       ...prev,
       keyword:        parsed.keyword || (parsed.categoryExplicit ? "" : (p.role || prev.keyword)),
       category:       parsed.categoryExplicit ? (parsed.category || prev.category) : prev.category,
-      employmentType: parsed.employmentType || p.type     || prev.employmentType,
+      employmentType: normaliseEmploymentType(parsed.employmentType || p.type || prev.employmentType),
       schedule:       parsed.workSchedule   || prev.schedule,
     }));
     if (parsed.roleType && parsed.keyword) {
@@ -702,7 +711,7 @@ export default function Home() {
     profileRef.current = {
       ...prev,
       role:        parsed.keyword || (parsed.categoryExplicit ? null : prev.role),
-      type:        parsed.employmentType                      || prev.type,
+      type:        normaliseEmploymentType(parsed.employmentType || prev.type),
       schedule:    parsed.workSchedule                        || prev.schedule,
       experience:  parsed.experience                          || prev.experience,
       category:    (parsed.categoryExplicit ? parsed.category : null) || prev.category,
